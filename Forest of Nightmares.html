@@ -1,0 +1,315 @@
+<head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <title>The Forest of Nightmares</title>
+</head>
+<script>
+    //variables that are use throughout the game
+    let rounds = prompt("Before we start how many encounters do you wanna play for?");//asks the player how many battles they wanna play.
+    let player_hp=50;//sets the players health
+    let player_dmg = Math.floor(Math.random()*10);//sets the base player damage
+    let player_heal = 0;//creates a variable that is being used for the players heal move
+    let enemy_hp = 0;//variable used to set eenmy hp
+    let enemy_max_dmg = 0;//used to set the enemy's max damage
+    let enemy_dmg = 0;//variable used to set enemy damage
+    let enemy_action = Math.floor(Math.random()*1);//unused
+    let player_action = "";//used to get the player action
+    let player_name=prompt("What's your name traveler?");//get's the name of the player
+    let battle=0;//used to tell if the player is in a battle
+    let enemy_type="";//used to set the enemy type
+    let battle_loss=0;//used to tell if the player died
+    let gold=5;//sets a starting amount of gold so that the player can buy something if they start with a shop
+    let gold_gain=7;//a maximum number of the amount of gold a player can get in a battle
+    let min_gold=3;//a minimum number of the amount of gold a player can get in a battle
+    let move=0;//unused variable
+    let paths=[0,1,2,3,4,5];//variable that is used to figured out which if any enemy the player will encounter or if they will encounter a shop
+    let roguelike=0;//unused
+    let shop_item1=0;//unused
+    let shop_item2=0;//unused
+    let shop_item3=0;//unused
+    let better_sword=0;//use as a shop item that adds more damage to the players attacks
+    let even_better_sword=0;//unused
+    let armor = 0;//some armor that makes the player take less damage
+    let min_heal=3;//the minimum amount of healing a player can get from a healing potion
+    let i =0;//used to find out which path the player will take
+    let encounters = 0;//counts how many fights the player has won so the game can end
+    let world = 1;
+    let shop_world = world;
+    let boss_defeat;
+
+//"story" begins
+    alert("WATCH OUT!");//message used in the game
+    alert("YOU JUST ENTERED THE FOREST OF NIGHTMARES!");//message used in the game
+
+    //game start
+path_end();//calls the function that figures out which enemy the player will encounter
+
+
+//the players turn
+    player_turn();//starts the players turn
+    function player_turn() {//creates the function that makes it possible for the player to actually play the game
+       
+        while(battle>=0&&battle_loss==0){//it only runs while the player is not dead AND the battle is started
+    player_action=prompt("what will you do? type attack for an attack, type heal for a bit of your health back!");//creates a prompt that asks the player about what they will do
+    if (player_action==="attack") {//set to run if the player replies with the attack command 
+        player_dmg = Math.floor(Math.random()*10)+better_sword;//calculates the player's damage
+        if (player_dmg==0) {//if the players damage ends up being 0 they miss
+            alert("you swing you sword.. and miss?");//textbox that tells the player that they missed
+            enemy_turn();//calls the function that starts the enemy's turn
+        } else {//if the player's damage is over 0
+            alert("you swing your sword and deal " + player_dmg + " to the " + enemy_type);//display the message tthat tells the player how much damage they deal to the enemy
+        enemy_hp=enemy_hp-player_dmg;//calculates the enemy's hp after the attack
+        alert("the enemy " + enemy_type + " has " + enemy_hp + " hp left");//tells the player how much hp the enemy has left
+        if(enemy_hp<=0) {//if the enemy's hp ends up being 0 or under it dies
+        battle_end();//calls the function that tells the game to stop the battle
+    } else {//of the enemy's hp is over 0 zero
+        enemy_turn();//calls the function that starts the enemy's turn
+    }
+        }
+   
+
+    } else if(player_action==="heal"){//set to run if the player replies with heal 
+        player_heal = Math.floor(Math.random()*5)+min_heal;//calculates how much the player will heal for
+        player_heal+min_heal;//-||-
+        alert("you quickly drink a small potion that heals you for " + player_heal + " hp");//tells the player how much they healed for
+        player_hp=player_hp+player_heal;//code that heals the player
+        enemy_turn();//calls the function that starts the enemy's turn
+
+    } else {//if the player command is not attack or heal
+        alert ("that's not one of the commands!");//tells the player they entered the wrong command
+        player_turn();//restarts the player's turn so they don't lose on a typo or other mistake
+    }
+    }
+}
+
+    function enemy_turn(){//creates the function that makes the enemy  attack
+        enemy_dmg=Math.floor(Math.random()*enemy_max_dmg);//randomly chooses how much damage the enemy will do from 0 to the max damage
+        enemy_dmg=enemy_dmg-armor//calculates how much damage the enemy will do
+        if(enemy_dmg<0){
+            while(enemy_dmg<0){
+                enemy_dmg++;
+            }
+        }
+        player_hp=player_hp-enemy_dmg;//deals damage to the player
+        if (enemy_dmg==0) {//if the enemy's damage ends up being 0 or under it has the possibility of doing a couple of things
+            alert("the " + enemy_type + " attacks and misses");//displays message that says the enemy missed
+            alert("you have " + player_hp + " hp left");//tells the player how much health they have left
+        } else { //if the damage is over 0
+            if (player_hp<=0) {//if the player has 0 or less health left they die
+                alert("the " + enemy_type + " attacks you for " + enemy_dmg + " damage");//displays message that tells the player how much the enemy damages them for
+            alert("you have " + player_hp + " hp left");//tells the player how much helath they have left
+                dead();//calls the functio that actually kills the player 
+            } else {//if the player survives
+                alert("the " + enemy_type + " attacks you for " + enemy_dmg + " damage");//displays message that tells the player how much the enemy damages them for
+            alert("you have " + player_hp + " hp left");//tells the player how much health they have left
+            player_turn();//calls the function that starts the player's turn
+            }
+            
+        }
+        
+    }
+        function dead() {//creates a function that makes the player able to die
+            alert("the " + enemy_type + " manages to take you down");//text being displayed when the player dies
+            alert("better luck next time, " + player_name);//text being displayed when the player dies
+            battle_loss++;//adds 1 to battle_loss to stop the player_turn function from starting and thereby stopping all other functions form being called
+            if (battle_loss==1) {//if battle_loss is 1
+                setTimeout(location.reload(true));//reloads the page to make the player start over
+            }
+        }    
+
+        function battle_end() {//creates a that ends the battle
+            encounters++;//adds one to enncounters so the game can stop at one point
+        alert("You managed to overcome the " + enemy_type);//displays a message that tells the player that they killed the enemy
+        if (encounters>=rounds){//makes sure that the game ends when the player has beaten the set amount of encounters
+            game_end();//calls the function that ends the game
+        } else if (encounters<rounds){//if there are less encounters than rounds continue the game by
+        gold_gain = Math.floor(Math.random()*7)+min_gold;//adding a random amount of gold to the player 
+        gold = gold+gold_gain;//calculates the players total gold
+        alert("You gained " + gold_gain + " gold");//displays a message that tells the player how much gold they gained form the fight
+        alert("You have " + gold + " gold");//tells the player how much gold they have in total
+        battle++;//adds 1 to battle to stop a battle from starting prematurely 
+        alert ("You move longer into the forest");//displays a mmessage that acts as an transition to the next part
+        world=shop_world;
+        path_end();//calls the function that determines what happends next
+        battle--;//removes 1 from battle so that a battle can start again
+        if (paths[i]>1){//if paths is over 1 where 1 means that you enter the shop
+        player_turn();//calls the function that starts the player's turn if paths[i] is over 1
+        } else {//else if paths[i] is under 1 
+            shop();//calls the shop function
+        }
+    }
+    } 
+
+    
+
+
+
+
+
+
+    function path_end() {//creates the function that calculates what happends in the game
+        i=Math.floor(Math.random()*6)+1;//gets a random value for the variable i
+        while (world==1){
+            if (encounters == rounds){
+                boss();
+                world=0;
+            }
+        if (paths[i]==1){//if paths[i] is 1
+            shop();//calls the shop function
+        }   else if (paths[i]==2)  {//if paths[i] is 2
+            enemy_type="skeleton"; // sets the enemy type to accordingly
+            enemy_max_dmg = 5;//sets the enemy's max damage accordingly
+            enemy_hp = 10;//sets the enemy's max hp accordingly
+            world=0;
+            enemy_encounter();//calls the function that tells the player which enemy they are batteling
+        } else if ( paths[i]==3){//if paths[i] is 3
+            enemy_type="goblin";// sets the enemy type to accordingly
+            enemy_max_dmg = 8;//sets the enemy's max damage accordingly
+            enemy_hp = 20;//sets the enemy's max hp accordingly
+            world=0;
+            enemy_encounter();//calls the function that tells the player which enemy they are batteling
+        } else if (paths[i]==4){//if paths[i] is 4
+            enemy_type="slime";// sets the enemy type to accordingly
+            enemy_max_dmg = 5;//sets the enemy's max damage accordingly
+            enemy_hp = 30;//sets the enemy's max hp accordingly
+            world=0;
+            enemy_encounter();//calls the function that tells the player which enemy they are batteling
+        } else if (paths[i]==5){//if paths[i] is 5
+            enemy_type="bandit";// sets the enemy type to accordingly
+            enemy_max_dmg = 12;//sets the enemy's max damage accordingly
+            enemy_hp = 15;//sets the enemy's max hp accordingly
+            world=0;
+            enemy_encounter();//calls the function that tells the player which enemy they are batteling
+        } else if (paths[i]=6){//if paths[i] is 6
+            enemy_type="swamp monster";// sets the enemy type to accordingly
+            enemy_max_dmg = 12;//sets the enemy's max damage accordingly
+            enemy_hp = 30;//sets the enemy's max hp accordingly
+            world=0;
+            enemy_encounter();//calls the function that tells the player which enemy they are batteling
+        }
+        }
+    }
+
+    function continue_shopping(){//creates a function that help the player buy more items at once
+        let shopMore = prompt("Is that everything?");//asks the player if they have bought everything they wanted/had gold enough for
+        if (shopMore==="no"){//if the player answears it runs most of the shop code again
+             buy = prompt("You have " + gold + " gold, what will you buy? Here's what I have in stock: a better sword that adds +5 dmg to your attack for 5 gold, a piece of armor that adds +3 defence for 5 gold, or better healing potions that adds + 3 to the healing potion for 5 gold. type sword for a better sword, type armor for the armor or type healing for the better healing potions.");//asks the player what they will buy
+                if (buy==="sword") {//if the player types sword
+                    if(gold>=5){//if they have 5 or more gold
+                        alert ("Thank you for your purchase! " + player_name + " and good luck on the adventure");//display a message that tells the player that they bought the item
+                        better_sword+=5;//increases the swords damage
+                        gold-=5;//removes 5 gold from the player
+                        continue_shopping();//calls the function continue_shopping.
+                    }
+                    else {// else if the player doesn't have enough gold
+                        alert("Oh sorry, you don't have enough gold for that, BYE!");//displays a message that tells the player that they don't have enough money and the clerk kick them out of the shop
+                        world=shop_world;
+                        path_end();//calls the path_end function
+                    }
+                } else if(buy==="armor"){//if the player types armor
+                    if(gold>=5){//if they have 5 or more gold
+                         alert ("Thanks for your purchase " + player_name +  " Good luck on your adventure!");//display a message that tells the player that they bought the item
+                        armor=armor+3;//adds 3 to armor
+                        gold=gold-5//removes 5 gold from the player
+                        continue_shopping();//calls the function continue_shopping
+                        }else{// else if the player doesn't have enough gold
+                            alert("Oh sorry, you don't have enough gold for that, BYE!");//displays a message that tells the player that they don't have enough money and the clerk kick them out of the shop
+                            world=shop_world;
+                            path_end();//calls the path_end function
+                        }
+                    
+                } else if (buy==="healing"||"heal") {//if the player typed either healing or heal
+                    if (gold>=5) {//if they have 5 or more gold
+                        alert ("Thank you for your purchase! " + player_name + " and good luck on the adventure");//display a message that tells the player that they bought the item
+                    min_heal=min_heal+3;//adds 3 to the minimum amount of healing the player can recieve
+                    gold=gold-5;//removes 5 gold from the player
+                    continue_shopping();//calls the continue_shopping function
+                    } else {// else if the player doesn't have enough gold
+                        alert("Oh sorry, you don't have enough gold for that, BYE!");//displays a message that tells the player that they don't have enough money and the clerk kick them out of the shop
+                        world=shop_world;
+                        path_end();//calls the path_end function
+                        
+                    }
+
+                }
+        } else if (shopMore==="yes"){//if the player answears yes
+            alert("You exit the shop");//tells the player that they left the shop
+            world=shop_world;
+            path_end();//calls the function path_end
+        } else {
+            alert("please type yes or no");
+            continue_shopping();
+        }
+    }
+
+    function shop()  { //creates the function shop
+        ("You walk down the " + move + " path, and you see a little shop");//this is unused with an old variable that have been removed
+        let enter_shop = prompt("Do you wanna enter the shop? type yes if you wanna enter the shop or type no if you don't want to enter the shop");//asks the playet if they wanna enter the shop
+        if (enter_shop==="yes"){//if the player types yes
+            alert("Hello, there traveler. I've got some items for sale if you have the gold for it.");//displays a little message
+                let buy = prompt("You have " + gold + " gold, what will you buy? Here's what I have in stock: a better sword that adds +5 dmg to your attack for 5 gold, a piece of armor that adds +3 defence for 5 gold, or better healing potions that adds + 3 to the healing potion for 5 gold. type sword for a better sword, type armor for the armor or type healing for the better healing potions.");//asks the player what they will buy
+                if (buy==="sword") {//if the player types sword
+                    if(gold>=5){//if they have 5 or more gold
+                        alert ("Thank you for your purchase! " + player_name + " and good luck on the adventure");//display a message that tells the player that they bought the item
+                        better_sword+=5;//increases the swords damage
+                        gold-=5;//removes 5 gold from the player
+                        continue_shopping();//calls the function continue_shopping.
+                    }
+                    else {// else if the player doesn't have enough gold
+                        alert("Oh sorry, you don't have enough gold for that, BYE!");//displays a message that tells the player that they don't have enough money and the clerk kick them out of the shop
+                        world=shop_world;
+                        path_end();//calls the path_end function
+                    }
+                } else if(buy==="armor"){//if the player types armor
+                    if(gold>=5){//if they have 5 or more gold
+                         alert ("Thanks for your purchase " + player_name +  " Good luck on your adventure!");//display a message that tells the player that they bought the item
+                        armor=armor+3;//adds 3 to armor
+                        gold=gold-5//removes 5 gold from the player
+                        continue_shopping();//calls the function continue_shopping
+                        }else{// else if the player doesn't have enough gold
+                            alert("Oh sorry, you don't have enough gold for that, BYE!");//displays a message that tells the player that they don't have enough money and the clerk kick them out of the shop
+                            world=1;
+                            path_end();//calls the path_end function
+                        }
+                    
+                } else if (buy==="healing"||"heal") {//if the player typed either healing or heal
+                    if (gold>=5) {//if they have 5 or more gold
+                        alert ("Thank you for your purchase! " + player_name + " and good luck on the adventure");//display a message that tells the player that they bought the item
+                    min_heal=min_heal+3;//adds 3 to the minimum amount of healing the player can recieve
+                    gold=gold-5;//removes 5 gold from the player
+                    continue_shopping();//calls the continue_shopping function
+                    } else {// else if the player doesn't have enough gold
+                        alert("Oh sorry, you don't have enough gold for that, BYE!");//displays a message that tells the player that they don't have enough money and the clerk kick them out of the shop
+                        world=shop_world;
+                        path_end();//calls the path_end function
+                        
+                    }
+
+                }
+             
+        } else if (enter_shop==="no"){//if they player doesn't want to enter the shop
+        world=shop_world;    
+        path_end();//calls the function path_end 
+        } else {
+            alert("Please enter yes or no");
+            shop();
+        }
+    }
+    
+
+    function enemy_encounter(){//creates the function enemy_encounter, that is used to smoothen the transition into fights
+    alert("you encounter a " + enemy_type);//displays a little message
+}
+function game_end(){//creates the function game_end that ends the game
+    alert ("You start to see a light which indicates the end of the forest");//diaplays a message
+    alert ("You follow the light and exit the forest");//displays a message
+    alert ("You're finally free from the forest");//displays a message
+    alert ("THE END");//displays a message
+    battle=-1;//sets the varable battle too -1 to stop more battles from occuring
+}
+
+function boss(){
+    enemy_type ="witch";
+    let boss_hp = 50;
+    let boss_dmg = 15;
+}
+</script>
