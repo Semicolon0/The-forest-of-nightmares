@@ -1,0 +1,28 @@
+<head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <title>The Forest of Nightmares button demo</title>
+</head>
+<script>
+    let enemy_hp = 20;
+    let enemy_dmg = 0;
+    let player_dmg = 0;
+    let player_hp = 30;
+    let heal=0;
+
+    function playerAttack(){
+        player_dmg = Math.floor(Math.random()*8);
+        alert("you deal " + player_dmg + " to the enemy");
+        enemy_hp -= player_dmg;
+        alert("the enemy has " + enemy_hp + " left");
+    }
+</script>
+<button onclick="playerAttack()">Attack</button>
+<script>
+    function playerHeal(){
+        heal = Math.floor(Math.random()*5);
+        alert("you drink a potion and heal for " + heal);
+        player_hp += heal;
+        alert("you have " + player_hp + " left")
+    }
+</script>
+<button onclick="playerHeal()">heal</button>
