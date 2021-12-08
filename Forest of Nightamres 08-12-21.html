@@ -1,0 +1,197 @@
+<head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <title>The Forest of Nightmares button demo</title>
+</head>
+<body onload="move()"></body>
+<canvas id = "myCanvas" width="1000" height="700" style="border:3px solid #000000;"></canvas>
+<!--variables-->
+<script>
+    let enemy_hp = 20;
+    let enemy_dmg = 0;
+    let player_dmg = 0;
+    let player_hp = 30;
+    let heal=0;
+    let enemyHeal = 0;
+    let battle = true;
+    let enemyType = "";
+    let gold = 5;
+    let playerMaxDmg = 10;
+    let playerMaxHeal = 5;
+    let playerDef = 0;
+    let path = Math.floor(Math.random()*2);
+    let enemyMaxDmg = 0;
+    let enemyActive = false;
+</script>
+
+<script>
+    function playerActive(){
+        alert("it's your turn");
+
+    }
+</script>
+
+<script>   
+    function move(){
+        path = Math.floor(Math.random()*2);
+    if (path==1){
+        chooseEnemy();
+    } else {
+        shop();
+    }
+}</script>
+
+<!--player attack-->
+<script>
+    function playerAttack(){
+if (battle === true){
+        player_dmg = Math.floor(Math.random()*10);
+        alert("you deal " + player_dmg + " to the enemy");
+        enemy_hp -= player_dmg;
+        alert("the enemy has " + enemy_hp + " left");
+        if(enemy_hp <= 0){
+            battle = false;
+            chooseEnemy();
+        }
+        if (enemy_hp > 0){
+        enemyTurn();
+        }
+} else {
+    alert("the enemy died"); //debugging
+}
+}
+</script>
+
+<button id = "attackButton" onclick="playerAttack()" style="font-size:25px">&#128298</button>
+<!--player heal-->
+<script>
+if(battle == true){
+    function playerHeal(){
+        heal = Math.floor(Math.random()*playerMaxHeal);
+        alert("you drink a potion and heal for " + heal + " hp");
+        player_hp += heal;
+        alert("you have " + player_hp + "  hp left");
+        if (enemy_hp > 0) {
+        enemyTurn();
+        }
+    }
+}
+</script>
+
+
+
+<button id = "healButton" onclick="playerHeal()" style="font-size:25px">&#128138</button>
+<!--enemy turn-->
+<script>
+    function enemyTurn(enemyMove){
+        enemyMove = Math.floor(Math.random()*2);
+        if (enemyMove==1){
+            alert ("the " + enemyType + " attacks");
+            enemy_dmg = Math.floor(Math.random()*enemyMaxDmg);
+            enemy_dmg -= playerDef
+            if(enemy_dmg < 0){
+                enemy_dmg = 0;
+            }
+            alert ("the enemy deals " + enemy_dmg + " damage");
+            player_hp -= enemy_dmg;
+            alert ("You have " + player_hp + " hp left");
+        } else {
+            alert ("the " + enemyType + " heals");
+            enemyHeal = Math.floor(Math.random()*3);
+            alert("the enemy heals for " + enemyHeal);
+            enemy_hp += enemyHeal;
+            alert (" the enemy has " + enemy_hp + " hp left");
+        }
+    }
+</script>
+
+<script>
+    function enemyDeath(goldGain){
+        battle = false;
+        goldGain = Math.floor(Math.random()*4)+3;
+        alert ("you slayed the " + enemyType + "!");
+        alert ("You got " + goldGain + " gold!" );
+        alert ("You have " + gold + "!");
+    }
+</script>
+
+<script>
+    function chooseEnemy(enemyNum){
+        enemyNum = Math.floor(Math.random()*5)+1;
+        if (enemyNum == 1){
+            enemyType = "swamp monster";
+            enemyMaxDmg = 12;
+            enemy_hp = 30;
+        } else if ( enemyNum == 2){
+            enemyType = "goblin";
+            enemyMaxDmg = 8;
+            enemy_hp = 20;
+        } else if (enemyNum == 3){
+            enemyType = "slime";
+            enemyMaxDmg = 5;
+            enemy_hp = 30;
+        } else if (enemyType == 4){
+            enemyType = "bandit";
+            enemyMaxDmg = 12;
+            enemy_hp = 15;
+        } else{
+            enemyType = "skeleton";
+            enemyMaxDmg = 5;
+            enemy_hp = 10;
+        } 
+    }
+</script>
+
+<script>
+    function shop (){
+        alert("Welcome to my shop traveler!");
+        alert ("Have a look at my wares!");
+    }
+</script>
+
+<button id ="shopDmg" onclick="buySword()" style="font-size:25px">&#128170</button>
+<button id ="shopHeal" onclick="buyHeal()" style="font-size:25px">&#128151</button>
+<button id ="shoArmor" onclick="buyArmor()" style="font-size:25px">&#128511</button>
+
+<script>
+    function buySword(){
+        if (gold >= 5) {
+            playerMaxDmg+=5;
+            alert("You bought the upgraded sword!");
+            alert("Your max damage has increased to " + playerMaxDmg);
+            gold -= 5;
+            move();
+        } else if (gold < 5){
+            alert("sorry you don't have enough gold!");
+            alert("the owner kicks you out");
+            move();
+        }
+    }
+    
+    function  buyHeal(){  
+        if (gold >= 5) {
+            playerMaxHeal+=5;
+            alert("You bought the upgraded healing potion!");
+            alert("Your max healing has increased to " + playerMaxHeal);
+            gold -= 5;
+            move();
+        } else if (gold < 5){
+            alert("sorry you don't have enough gold!");
+            alert("the owner kicks you out");
+            move();
+        }
+    }
+
+    function buyArmor(){
+        if (gold >= 5) {
+            playerDef+=3;
+            alert("You bought the upgraded armor!");
+            alert("You now take " + playerDef + " less!");
+            gold -= 5;
+            move();
+        } else if (gold < 5){
+            alert("sorry you don't have enough gold!");
+            alert("the owner kicks you out");
+            move();
+        }
+    }
+</script>
